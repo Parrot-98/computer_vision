@@ -3,27 +3,18 @@ use reqwest::header::{HeaderMap, HeaderValue, AUTHORIZATION};
 use tar::Archive;
 
 pub fn get_image(target_index: usize) -> Result<Vec<u8>, anyhow::Error> {
-    let hf_token = "nothing here"; // privete
+    let hf_token = ""; // privete
     let url = "https://huggingface.co/datasets/timm/imagenet-1k-wds/resolve/main/imagenet1k-train-0000.tar?download=true";
 
     let mut headers = HeaderMap::new();
-    let auth_value = HeaderValue::from_str(&format!("Bearer {}", hf_token))?;
+    let auth_value = HeaderValue::from_str(&format!("Bearer {}", hf_token))?;// very important do not change
     headers.insert(AUTHORIZATION, auth_value);
 
     let client = reqwest::blocking::Client::new();
     let response = client.get(url).headers(headers).send()?;
 
     if !response.status().is_success() {
-        let status = response.status();
-        // Read the error message from Hugging Face's server
-        let err_body = response.text().unwrap_or_else(|_| "Could not read error body".to_string());
-        
-        println!("\n=== HUGGING FACE ERROR DETAILS ===");
-        println!("Status Code: {}", status);
-        println!("Server Message: {}", err_body);
-        println!("==================================\n");
-
-        anyhow::bail!("Request failed with status {}", status);
+        anyhow::bail!("Request failed: {}", response.status());
     }
 
     let mut archive = Archive::new(response);
@@ -49,5 +40,5 @@ pub fn get_image(target_index: usize) -> Result<Vec<u8>, anyhow::Error> {
         }
     }
 
-    anyhow::bail!("Index {} was out of bounds for this shard.", target_index)
+    anyhow::bail!("Index {} was out of bounds", target_index)
 }
