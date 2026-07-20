@@ -3,7 +3,7 @@ use reqwest::header::{HeaderMap, HeaderValue, AUTHORIZATION};
 use tar::Archive;
 
 pub fn get_image(target_index: usize) -> Result<Vec<u8>, anyhow::Error> {
-    let hf_token = ""; // privete
+    let hf_token = "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"; // privete
     let url = "https://huggingface.co/datasets/timm/imagenet-1k-wds/resolve/main/imagenet1k-train-0000.tar?download=true";
 
     let mut headers = HeaderMap::new();
